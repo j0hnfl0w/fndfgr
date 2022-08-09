@@ -1,0 +1,19 @@
+{
+  "New component": {
+    "scope": "vue",
+    "prefix": "com",
+    "body": [
+      "<style lang=\"scss\" scoped>",
+      "</style>",
+      "",
+      "<template lang=\"pug\">",
+      "</template>",
+      "",
+      "<script lang=\"ts\" setup>",
+      "const logger = inject('useLogger')('${TM_FILENAME_BASE}')",
+      "$0",
+      "</script>",
+      ""
+    ]
+  }
+}
