@@ -96,7 +96,7 @@ module.exports = {
     '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/require-await':
-      process.env.NODE_ENV === 'production' ? 'error' : 'off',
+      process.env.NODE_ENV === 'production' ? 'off' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
 }
