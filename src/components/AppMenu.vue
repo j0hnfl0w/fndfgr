@@ -5,7 +5,7 @@ import UserAvatar from 'components/UserAvatar.vue'
 <template lang="pug">
 q-btn(
   color="white"
-  :style="{width: '48px', height: '48px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm
+  :style="{width: '56px', height: '56px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm
   UserAvatar(id="fndfgr" :style="{}")
   q-icon(name="gesture" :style="{position: 'absolute', fontSize: '18px'}")
   q-menu(:offset="[0, 16]" :style="{borderRadius: '8px'}").shadow-20
@@ -14,4 +14,5 @@ q-btn(
       q-btn(flat no-caps align="left" to="/manifesto") Manifesto
       q-btn(flat no-caps align="left" to="/collections") Collections
       q-btn(flat no-caps align="left" to="/voids") Voids
+      q-btn(flat no-caps align="left" to="/fgrs") Fgrs
 </template>

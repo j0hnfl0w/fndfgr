@@ -36,7 +36,11 @@ import Polygon from 'ol/geom/Polygon'
 import { Style, Stroke } from 'ol/style'
 import { useLogger } from 'src/composables/useLogger'
 
-// const props = defineProps({})
+const props = defineProps({
+  query: { type: Object },
+  disabled: { type: Boolean, default: false },
+  readonly: { type: Boolean, default: false },
+})
 const emit = defineEmits(['meta'])
 
 const logger = useLogger('Mapper')
@@ -94,16 +98,13 @@ function getCage() {
   //   logger.log('viewCoords', viewCoords)
   //   // let polygon = new Polygon(viewCoords)
   //   // logger.log('polygon', polygon)
-
   //   const polygonFeature = new Feature(
   //     // new Polygon(viewCoords).transform('EPSG:4326', 'EPSG:3857')
   //     new Polygon(viewCoords)
   //   )
-
   //   let source = new VectorSource({
   //     features: [polygonFeature],
   //   })
-
   //   var layer = new VectorLayer({
   //     source: source,
   //     style: [
@@ -112,7 +113,6 @@ function getCage() {
   //       }),
   //     ],
   //   })
-
   //   map.value.addLayer(layer)
   // }, 2000)
 }
@@ -122,11 +122,18 @@ onMounted(() => {
   map.value = mapCreate()
   const view = map.value.getView()
   useGeographic()
+  logger.log(':onMounted props.query', props.query)
+  if (props.query) {
+    view.setCenter(props.query.coords)
+    view.setRotation(props.query.rotation)
+    view.setZoom(props.query.zoom)
+  }
+  // interval for meta
   state.metaInterval = setInterval(() => {
     emit('meta', {
       zoom: view.getZoom(),
       rotation: view.getRotation(),
-      center: view.getCenter()
+      center: view.getCenter(),
     })
   }, 1000)
 })
@@ -137,6 +144,6 @@ onBeforeUnmount(() => {
 })
 
 defineExpose({
-  refMap
+  refMap,
 })
 </script>

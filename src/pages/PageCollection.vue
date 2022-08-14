@@ -27,7 +27,7 @@ watch(
   () => route.params.id,
   async (to) => {
     logger.log(':W route.params.address', to)
-    if (to) {
+    if (to && route.path.startsWith('/collections')) {
       if (uuidValidate(to)) {
         getCollection({ id: to })
       } else {

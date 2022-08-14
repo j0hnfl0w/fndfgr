@@ -16,6 +16,8 @@ const routes: RouteRecordRaw[] = [
       },
       { path: 'voids', component: () => import('pages/PageVoids.vue') },
       { path: 'voids/:id', component: () => import('pages/PageVoid.vue') },
+      { path: 'fgrs', component: () => import('pages/PageFgrs.vue') },
+      { path: 'fgrs/:id', component: () => import('pages/PageFgr.vue') },
       { path: 'me', component: () => import('pages/PageMe.vue') },
       { path: 'users/:address', component: () => import('pages/PageUser.vue') },
       { path: 'manifesto', component: () => import('pages/PageManifesto.vue') },

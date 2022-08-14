@@ -4,7 +4,7 @@ import Avatar from 'vue-boring-avatars'
 
 defineProps({
   id: { type: String, default: 'fndfgr' },
-  size: { type: Number, default: 48 },
+  size: { type: Number, default: 56 },
 })
 </script>
 

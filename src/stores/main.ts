@@ -3,65 +3,99 @@ import { useLogger } from 'src/composables/useLogger'
 import { stringShort } from 'src/utils'
 import { useWallet } from 'solana-wallets-vue'
 import { api, apiReg, directus } from 'boot/api'
+import { useStorage } from '@vueuse/core'
 
 const logger = useLogger('storeMain')
 
-export const useStoreMain = defineStore('main', {
-  state: () =>
-    ({
-      network: null as any,
-      address: null as string | null,
-      authResolved: false,
-      user: null as any,
-      userCoords: null as any,
+export const useStoreMain = defineStore('main', () => {
+  // const network = ref(null)
+  const user = ref(null)
+  const address = ref(null)
+  const addressShort = computed(() => {
+    return stringShort(address.value)
+  })
 
-      collections: [],
-      voids: [],
-      fgrs: [],
-    } as any),
+  const collections = ref([])
+  const voids = ref([])
+  const fgrs = ref([])
 
-  getters: {
-    addressShort(state) {
-      return stringShort(state.address)
-    },
-  },
+  const wallet = useWallet()
+  wallet.autoConnect = ref(true)
 
-  actions: {
-    async init() {
-      logger.log(':init')
-    },
+  useStorage('walletName', 'Phantom')
 
-    async signIn() {
-      try {
-        logger.log(':signIn start')
-      } catch (e) {
-        logger.log(':signIn error', e)
+  watch(
+    wallet.ready,
+    (to) => {
+      logger.log(':W wallet.ready', to)
+      if (to) {
+        logger.log(':W wallet.ready', to)
+        const walletName = localStorage.getItem('walletName') as any | string
+        logger.log('walletName', walletName)
+        if (walletName) {
+          wallet.select(walletName)
+          wallet.connect()
+        }
       }
     },
+    {
+      immediate: true,
+    }
+  )
 
-    async signOut() {
+  watch(
+    wallet.disconnecting,
+    (to) => {
+      if (to) {
+        logger.log(':W wallet.disconnecting', to)
+        signOut()
+      }
+    },
+    { immediate: true }
+  )
+
+  async function signIn() {
+    logger.log(':signIn ?')
+  }
+
+  async function signOut() {
+    try {
+      logger.log(':signOut')
+      alert(':signOut alert')
       try {
-        logger.log(':signOut')
-        const { disconnect } = useWallet()
         await directus.auth.logout()
-        localStorage.clear()
-        disconnect()
-        this.user = null
-        this.network = null
-        this.address = null
       } catch (e) {
-        logger.log(':signOut error', e)
+        logger.log(':signOut logout error', e)
       }
-    },
+      localStorage.clear()
+      // wallet.disconnect()
+      user.value = null
+      address.value = null
+    } catch (e) {
+      logger.log(':signOut error', e)
+    }
+  }
 
-    async getUserByFilter(filter: any) {
-      logger.log(':getUserByFilter', filter)
-      const { data } = await directus
-        .items('directus_users')
-        .readByQuery({ filter })
-      const user = data?.[0] || null
-      logger.log(':getUserByFilter', user)
-      return user
-    },
-  },
+  async function getUserByFilter(filter: any) {
+    logger.log(':getUserByFilter', filter)
+    const { data } = await directus
+      .items('directus_users')
+      .readByQuery({ filter })
+    const user = data?.[0] || null
+    logger.log(':getUserByFilter', user)
+    return user
+  }
+
+  return {
+    user,
+    address,
+    addressShort,
+    collections,
+    voids,
+    fgrs,
+    signIn,
+    signOut,
+    getUserByFilter,
+    wallet,
+  }
 })

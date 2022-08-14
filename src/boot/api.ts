@@ -20,6 +20,7 @@ const walletOptions = {
     new SolflareWalletAdapter({ network: WalletAdapterNetwork.Mainnet }),
   ],
   autoConnect: true,
+  // localStorageKey: 'fndfgr-wallet',
 }
 
 import { Directus } from '@directus/sdk'

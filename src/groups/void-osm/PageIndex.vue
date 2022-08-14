@@ -1,13 +1,17 @@
 <script lang="ts" setup>
 import { useLogger } from 'src/composables/useLogger'
 import { useWindowSize } from '@vueuse/core'
-import html2canvas from 'html2canvas'
 import * as htmlToImage from 'html-to-image'
+import { directus } from 'boot/api'
 
 import Mapper from './components/Mapper.vue'
 import Describer from './components/Describer.vue'
 import Controlls from './components/Controlls.vue'
 
+const VOID_ORM_ID = '9a2a900c-5e1c-4301-93e7-d0fe52dbe206'
+const props = defineProps({
+  query: { type: Object },
+})
 const logger = useLogger('void-osm:PageIndex')
 
 const { width, height } = useWindowSize()
@@ -42,24 +46,42 @@ const state = reactive({
 }) as any
 
 async function fgrCreate(payload: any) {
-  logger.log(':fgrCreate', payload, refMapper.value)
+  logger.log(':fgrCreate payload', payload, refMapper.value)
   logger.log(':fgrCreate mapMeta', state.mapMeta)
-  // html2canvas(refMapperWrapper.value, {width: 600}).then((canvas: any) => {
-  //   logger.log(':fgrCreate canvas', canvas)
-  //   refControlls.value.appendChild(canvas)
-  // })
-  htmlToImage
-    .toPng(refMapperWrapper.value)
-    .then(function (dataUrl: any) {
-      var img = new Image()
-      img.src = dataUrl
-      img.width = 200
-      // document.body.appendChild(img);
-      refControlls.value.appendChild(img)
-    })
-    .catch(function (error: any) {
-      console.error('oops, something went wrong!', error)
-    })
+  try {
+    const coverDataUrl = await htmlToImage.toBlob(refMapperWrapper.value)
+    logger.log(':fgrCreate coverDataUrl', coverDataUrl)
+    // create cover image from file here?
+    const coverFormdata = new FormData()
+    coverFormdata.append('title', payload.name)
+    coverFormdata.append('file', coverDataUrl)
+    logger.log(':fgrCreate coverFormdata', coverFormdata)
+    const coverData = await directus.files.createOne(coverFormdata)
+    logger.log(':fgrCreate coverData', coverData)
+    // create fgr with this cover? no need to store tenor_url on our side
+    const _payload = {
+      status: 'published',
+      name: payload.name,
+      tenor_url: payload.url,
+      cover: coverData.id,
+      void: VOID_ORM_ID,
+      void_data: {
+        zoom: state.mapMeta.zoom,
+        coords: state.mapMeta.center,
+        rotation: state.mapMeta.rotation,
+      },
+      // TODO how to search on geo data inside json in pg?
+      // 'void-osm_zoom': state.mapMeta.zoom,
+      // 'void-osm_coords': state.mapMeta.center,
+      // 'void-osm_rotation': state.mapMeta.rotation,
+    }
+    logger.log(':fgrCreate _payload', _payload)
+    const fgrData = await directus.items('fgrs').createOne(_payload)
+    logger.log(':fgrCreate fgrData', fgrData)
+    // TODO whats next?
+  } catch (e) {
+    logger.log(':fgrCreate error', e)
+  }
 }
 
 function onMapperMeta(meta: any) {
@@ -94,5 +116,6 @@ q-page
       ).row
       Mapper(
         ref="refMapper"
+        :query="props.query"
         @meta="onMapperMeta").fit.bg-grey-3
 </template>

@@ -27,10 +27,10 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-PageVoidOSM(v-if="route.params.id === 'void-osm'")
-PageVoidGeoshot(v-else-if="route.params.id === 'void-geoshot'")
-PageVoidImg(v-else-if="route.params.id === 'void-img'")
-PageVoidVideo(v-else-if="route.params.id === 'void-video'")
+PageVoidOSM(v-if="route.params.id === 'void-osm'" :query="route.query")
+PageVoidGeoshot(v-else-if="route.params.id === 'void-geoshot'" :query="route.query")
+PageVoidImg(v-else-if="route.params.id === 'void-img'" :query="route.query")
+PageVoidVideo(v-else-if="route.params.id === 'void-video'" :query="route.query")
 div(v-else).row.full-width.window-height.items-center.content-center.justify-center
   span Void not found
 </template>
