@@ -110,7 +110,6 @@ q-page
         :style="{maxWidth: width > 1024 ? '240px' : '100%'}").full-width
     div(
       ref="refControlls"
-      class="gt-sm"
       :style="{position: 'absolute', zIndex: 999, bottom: 0, left: 0}"
       ).row.full-width.justify-center.content-center.items-center.q-pa-md.q-px-md
       img(id="image" :style="{width: '300px', height: '200px'}").br
