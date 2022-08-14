@@ -11,20 +11,16 @@ const storeMain = useStoreMain()
 
 async function getCollections() {
   logger.log(':getCollections')
-  // const { data } = await directus
-  //   .items('collections')
-  //   .readByQuery({ fields: '*' })
-  const data = [
-    { id: 'wrld', name: 'wrld' },
-    { id: 'art', name: 'art' },
-  ]
+  const { data } = await directus
+    .items('collections')
+    .readByQuery({ fields: '*' })
   logger.log(':getCollections', data)
   storeMain.collections = data
 }
 
+getCollections()
 onMounted(() => {
   logger.log(':onMounted')
-  getCollections()
 })
 </script>
 
@@ -37,7 +33,7 @@ q-page
     .row.full-width.q-mt-md
       router-link(
         v-for="(c,ci) in storeMain.collections" :key="c.id"
-        :to="`/collection/${c.id}`"
+        :to="`/collections/${c.name || c.id}`"
         :style="{maxWidth: '300px'}"
         ).row.full-width.q-pr-md.q-pb-md
         div(

@@ -3,8 +3,8 @@ import { createPinia } from 'pinia'
 import { useLogger } from 'src/composables/useLogger'
 import axios, { AxiosInstance } from 'axios'
 
-import SolanaWallets from 'solana-wallets-vue';
-import 'solana-wallets-vue/styles.css';
+import SolanaWallets from 'solana-wallets-vue'
+import 'solana-wallets-vue/styles.css'
 
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base'
 import {
@@ -17,7 +17,7 @@ const walletOptions = {
   wallets: [
     new PhantomWalletAdapter(),
     new SlopeWalletAdapter(),
-    new SolflareWalletAdapter({ network: WalletAdapterNetwork.Devnet }),
+    new SolflareWalletAdapter({ network: WalletAdapterNetwork.Mainnet }),
   ],
   autoConnect: true,
 }
@@ -42,7 +42,7 @@ const apiReg = axios.create({
 })
 
 const apiAnon = axios.create({
-  baseURL: API_URL
+  baseURL: API_URL,
 })
 
 const apiRaw = axios.create()
@@ -52,10 +52,4 @@ export default boot(({ app }) => {
   app.use(SolanaWallets, walletOptions)
 })
 
-export {
-  directus,
-  api,
-  apiReg,
-  apiAnon,
-  apiRaw,
-}
+export { directus, api, apiReg, apiAnon, apiRaw }

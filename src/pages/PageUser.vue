@@ -6,15 +6,18 @@ import { useLogger } from 'src/composables/useLogger'
 const logger = useLogger('PageUser')
 const storeMain = useStoreMain()
 const route = useRoute()
-const state = reactive({})
+const state = reactive({
+  user: null,
+}) as any
 
 watch(
   () => route.params.address,
-  async (to, from) => {
+  async (to) => {
     logger.log(':W route.params.address', to)
     if (to) {
-      const user = await storeMain.getUserByAddress(to)
-      logger.log(':user', user)
+      const user = await storeMain.getUserByFilter({ address: to })
+      logger.log(':W user', user)
+      state.user = user
     }
   },
   { immediate: true }
@@ -29,5 +32,5 @@ onMounted(() => {
 
 <template lang="pug">
 q-page
-  pre {{storeMain.user}}
+  pre.br {{ state.user }}
 </template>

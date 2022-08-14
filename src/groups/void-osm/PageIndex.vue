@@ -2,7 +2,7 @@
 import { useLogger } from 'src/composables/useLogger'
 import { useWindowSize } from '@vueuse/core'
 import html2canvas from 'html2canvas'
-import * as htmlToImage from 'html-to-image';
+import * as htmlToImage from 'html-to-image'
 
 import Mapper from './components/Mapper.vue'
 import Describer from './components/Describer.vue'
@@ -48,17 +48,18 @@ async function fgrCreate(payload: any) {
   //   logger.log(':fgrCreate canvas', canvas)
   //   refControlls.value.appendChild(canvas)
   // })
-  htmlToImage.toPng(refMapperWrapper.value)
+  htmlToImage
+    .toPng(refMapperWrapper.value)
     .then(function (dataUrl: any) {
-      var img = new Image();
-      img.src = dataUrl;
+      var img = new Image()
+      img.src = dataUrl
       img.width = 200
       // document.body.appendChild(img);
       refControlls.value.appendChild(img)
     })
     .catch(function (error: any) {
       console.error('oops, something went wrong!', error)
-    });
+    })
 }
 
 function onMapperMeta(meta: any) {
@@ -83,6 +84,7 @@ q-page
         :style="{maxWidth: width > 1024 ? '240px' : '100%'}").full-width
     div(
       ref="refControlls"
+      class="gt-sm"
       :style="{position: 'absolute', zIndex: 999, bottom: 0, left: 0}"
       ).row.full-width.justify-center.content-center.items-center.q-pa-md.q-px-md
       Controlls()

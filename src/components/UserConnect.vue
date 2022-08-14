@@ -24,7 +24,7 @@ watch(
     if (to) {
       logger.log(':W publicKey', to?.toBase58())
       storeMain.address = to?.toBase58()
-      // signIn()
+      signIn()
     }
   },
   {
@@ -33,18 +33,7 @@ watch(
   }
 )
 
-const getCurrentUser = async (email) => {
-  logger.log(':getCurrentUser start')
-  const { data } = await directus
-    .items('directus_users')
-    .readByQuery({ filter: { email } })
-  const user = data?.[0]
-  logger.log(':getCurrentUser user', user)
-  storeMain.user = user
-  return user
-}
-
-const getPassword = async (msg) => {
+async function getPassword(msg) {
   const ss = await signMessage.value(new TextEncoder().encode(msg))
   const values = ss.values()
   let password = ''
@@ -55,68 +44,81 @@ const getPassword = async (msg) => {
   return password
 }
 
-const signIn = async () => {
+async function signIn() {
   try {
     logger.log(':signIn start')
 
     await connect()
 
-    const a = storeMain.address
-    const email = `${a}@${DOMAIN}`
+    const address = storeMain.address
+    const email = `${address}@${DOMAIN}`
 
-    logger.log(':signIn', { a, email })
+    logger.log(':signIn', { address, email })
 
     await directus.auth
       .refreshIfExpired()
       .then(async () => {
-        logger.log(':signIn authed start')
-
-        if (!localStorage.getItem('auth_token')) {
-          const password = await getPassword(a)
-          const authd = await directus.auth.login({ email, password })
-          logger.log(':signIn authed authd', authd)
-        }
-
-        await getCurrentUser(email)
-
-        storeMain.authResolved = true
+        logger.log(':signIn refresh done')
+        const user = await storeMain.getUserByFilter({ address })
+        logger.log(':signIn refresh user', user)
+        storeMain.user = user
       })
       .catch(async (e) => {
-        logger.log(':signIn authed error', e)
+        logger.log(':signIn refresh error', e)
+        // $q.notify({ type: 'error', message: e.toString() })
+        // TODO take it from address signature or from user input
+        const password = await getPassword(address)
 
-        // try {
-        //   logger.log(':signIn signUp start')
-        //   const { data } = await apiReg.post('/users', {
-        //     email,
-        //     password,
-        //     role: USER_ROLE_ID,
-        //   })
-        //   logger.log(':signIn signUp data', data)
-        // } catch (e) {
-        //   logger.log(':signIn signUp error', e)
-        // }
-        // const d = await directus.auth.login({ email, password })
-        // logger.log('d', d)
+        try {
+          logger.log(':signIn login start')
+          const loginData = await directus.auth.login({ email, password })
+          logger.log(':signIn login data', loginData)
+          const user = await storeMain.getUserByFilter({ address })
+          logger.log(':signIn login user', user)
+          storeMain.user = user
+        } catch (e) {
+          logger.log(':singIn login error', e)
+          // $q.notify({ type: 'error', message: e.toString() })
+          // creds are wrong or no such user? how to define?
+          try {
+            logger.log(':signIn reg start')
+            const { data } = await apiReg.post('/users', {
+              email,
+              address,
+              password,
+              role: USER_ROLE_ID,
+            })
+            logger.log(':signIn reg data', data)
+          } catch (e) {
+            logger.log(':signIn error', e)
+            // $q.notify({ type: 'error', message: e.toString() })
+          }
+
+          const loginData = await directus.auth.login({ email, password })
+          logger.log(':signIn login2 data', loginData)
+          // final step get user with our User role
+          const user = await storeMain.getUserByFilter({ address })
+          logger.log(':signIn login2 user', user)
+          storeMain.user = user
+        }
       })
-
     logger.log(':signIn done')
-    $q.notify({ type: 'success', message: 'Ur in!' })
+    $q.notify({ type: 'success', message: 'wlcm!' })
   } catch (e) {
     logger.log(':signIn error', e)
     $q.notify({ type: 'error', message: e.toString() })
   }
 }
 
-onMounted(async () => {
+onMounted(() => {
   logger.log(':onMounted')
-  // await connect()
 })
 </script>
 
 <template lang="pug">
 .row.no-wrap
   q-btn(
-    v-if="storeMain.user"
+    v-if="true"
     color="white"
     to="/me"
     :style="{width: '48px', height: '48px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm

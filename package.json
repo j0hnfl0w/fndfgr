@@ -29,6 +29,7 @@
     "pinia": "^2.0.13",
     "quasar": "^2.0.0",
     "solana-wallets-vue": "^0.4.2",
+    "uuid": "^8.3.2",
     "vue": "^3.0.0",
     "vue-boring-avatars": "^1.1.0",
     "vue-router": "^4.0.0"
