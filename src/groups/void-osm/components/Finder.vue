@@ -14,7 +14,7 @@
     .row.full-width.items-start.content-start.q-pt-md.q-pr-md
       div(
         v-for="i in state.images" :key="i"
-        :style="{width: 'calc(33.33% - 16px)', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer'}"
+        :style="{width: 'calc(33.33% - 16px)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer'}"
         @click="emits('match-url', i.media[0].tinygif.url)"
         ).row.q-ml-md.q-mb-md
         //- span {{i}}

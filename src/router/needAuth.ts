@@ -3,7 +3,7 @@ import { useLogger } from 'src/composables/useLogger'
 
 const logger = useLogger(':needAuth')
 
-export default function (to: any, from: any, next: any) {
+export default async function (to: any, from: any, next: any) {
   logger.log('start...')
   const storeMain = useStoreMain()
   if (storeMain.user) {
@@ -11,6 +11,11 @@ export default function (to: any, from: any, next: any) {
     next()
   } else {
     logger.log('nope...')
+    if (localStorage.getItem('auth_token')) {
+      // const user = await storeMain.getUserByFilter({ address })
+      // logger.log(':signIn login user', user)
+      // storeMain.user = user
+    }
     next(from)
   }
 }

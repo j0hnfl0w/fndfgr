@@ -38,7 +38,7 @@ onMounted(() => {
 
 <template lang="pug">
 q-page
-  .row.full-width.window-height.items-center.content-center.justify-center
+  .row.full-width.window-height.items-center.content-center.justify-center.q-px-md
     FgrItem(
       v-if="state.fgr"
       :fgr="state.fgr"

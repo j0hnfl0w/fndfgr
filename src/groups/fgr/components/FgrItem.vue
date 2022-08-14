@@ -29,7 +29,7 @@ onMounted(() => {
 </script>
 
 <template lang="pug">
-div(:style="{maxWidth: '500px', borderRadius: '6px', overflow: 'hidden'}").column.full-width.bg-grey-3
+div(:style="{maxWidth: '500px', borderRadius: '8px', overflow: 'hidden'}").column.full-width.bg-grey-3
   template(v-if="state.voidAlias === 'void-osm'")
     div(:style="{borderRadius: '6px', overflow: 'hidden'}").row.full-width
       //- left

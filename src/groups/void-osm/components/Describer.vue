@@ -7,7 +7,7 @@
     debounce="500"
     :loading="state.tenorLoading"
     :input-style="{padding: '8px'}"
-    :style="{borderRadius: '6px'}"
+    :style="{borderRadius: '8px'}"
     ).full-width.bg-grey-2.shadow-10
     template(#append)
       q-icon(v-if="state.keywordsString.length" name="clear" @click="state.keywordsString = '', state.url = null").q-mr-sm
@@ -50,7 +50,7 @@ import { useLogger } from 'src/composables/useLogger'
 import { useQuasar } from 'quasar'
 
 const props = defineProps({
-  create: { type: Function, required: true }
+  create: { type: Function, required: true },
 })
 
 const $q = useQuasar()
@@ -86,7 +86,7 @@ async function fgrCreate() {
   logger.log(':fgrCreate')
   state.fgrCreating = true
   // do stuff
-  await props.create({name: state.keywordsString, url: state.url})
+  await props.create({ name: state.keywordsString, url: state.url })
   // clear state
   state.fgrCreating = false
   state.tenorData = []
@@ -95,7 +95,7 @@ async function fgrCreate() {
   state.keywordsString = ''
   $q.notify({
     type: 'success',
-    message: 'fgr created!'
+    message: 'fgr created!',
   })
 }
 
@@ -116,5 +116,4 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

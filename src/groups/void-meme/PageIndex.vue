@@ -1,15 +1,7 @@
-<script lang="ts" setup>
-import { useLogger } from 'src/composables/useLogger'
-
-const logger = useLogger('void:meme:PageIndex')
-
-onMounted(() => {
-  logger.log(':onMounted')
-})
-</script>
-
 <template lang="pug">
-q-page.q-pa-xl
-  .row.full-width.q-pa-xl
-    h1 meme
+.row.full-width.items-center.content-center.justify-center.window-height.q-px-md
+  div(:style="{position: 'relative', maxWidth: '900px'}").row.full-width
+    div(:style="{position: 'relative', paddingBottom: '56%'}").row.full-width
+      div(:style="{position: 'absolute', zIndex: 1, borderRadius: '8px'}").row.fit.q-pa-md.bg-black
+        span.text-white i am meme
 </template>

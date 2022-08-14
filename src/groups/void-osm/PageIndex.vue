@@ -99,7 +99,7 @@ q-page
   div(
     ref="refWrapper"
     :style="{position: 'relative'}").row.full-width.window-height.justify-center.items-center.content-center
-    div(:style="{position: 'absolute', zIndex: 999, top: width > 1024 ? 0 : '60px', left: state.describerLeft+'px', width: width > 1024 ? 'auto' : '100%'}").row.q-pt-md.q-px-md
+    div(:style="{position: 'absolute', zIndex: 999, top: width > 1024 ? 0 : '70px', left: state.describerLeft+'px', width: width > 1024 ? 'auto' : '100%'}").row.q-pt-md.q-px-md
       Describer(
         ref="refDescriber"
         :create="fgrCreate"

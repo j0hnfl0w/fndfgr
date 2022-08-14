@@ -3,10 +3,11 @@ import { useLogger } from 'src/composables/useLogger'
 import { useStoreMain } from 'src/stores/main'
 import { directus } from 'boot/api'
 import { validate as uuidValidate } from 'uuid'
-
 import UserAvatar from 'components/UserAvatar.vue'
+import { useWindowSize } from '@vueuse/core'
 
 const logger = useLogger('PageVoids')
+const { width } = useWindowSize()
 const storeMain = useStoreMain()
 const route = useRoute()
 const state = reactive({
@@ -31,15 +32,18 @@ onMounted(() => {
 <template lang="pug">
 q-page
   .column.full-width.q-pa-md
-    div(:style="{height: '48px', paddingLeft: 'calc(16px + 48px)'}").row.items-center.content-center
+    div(
+      :style="{height: '56px', marginTop: 'calc(16px + 56px)', borderRadius: '8px'}"
+      ).row.items-center.content-center.justify-between.q-px-md.bg-grey-2
       span.text-bold voids
       q-btn(round flat dense size="sm" to="/manifesto?block=voids") ?
-    .row.full-width.q-mt-md
+      .col
+    div(:style="{paddingBottom: '200px'}").row.full-width.q-gutter-y-md.q-gutter-x-md.q-pt-md
       router-link(
         v-for="(c,ci) in storeMain.voids" :key="c.id"
         :to="`/voids/${c.alias || c.id}`"
-        :style="{maxWidth: '300px'}"
-        ).row.full-width.q-pr-md.q-pb-md
+        :style="{maxWidth: width > 700 ? '300px' : '100%', paddingRight: width > 700 ? '16px' : 0}"
+        ).row.full-width
         div(
           :style="{paddingBottom: '100%', position: 'relative'}"
           ).row.full-width

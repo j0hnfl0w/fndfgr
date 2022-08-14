@@ -4,8 +4,10 @@ import { useRoute } from 'vue-router'
 import { useLogger } from 'src/composables/useLogger'
 import { stringShort } from 'src/utils'
 import { directus } from 'boot/api'
+import { useWindowSize } from '@vueuse/core'
 
 const logger = useLogger('PageFgrs')
+const { width } = useWindowSize()
 const storeMain = useStoreMain()
 const route = useRoute()
 const state = reactive({
@@ -34,11 +36,14 @@ onMounted(() => {
 <template lang="pug">
 q-page
   .column.full-width.q-pa-md
-    div(:style="{height: '48px', paddingLeft: 'calc(16px + 48px)'}").row.items-center.content-center
+    div(:style="{height: '56px', paddingLeft: 'calc(16px + 56px)'}").row.items-center.content-center
       span.text-bold {{ stringShort(state.user?.address) }}
-    .row.full-width.justify-between.q-pt-md
-      FgrItem(
+    div(:style="{paddingBottom: '200px'}").row.full-width.q-gutter-y-md.q-pt-md
+      div(
         v-for="(f,fi) in state.fgrs" :key="f.id"
-        :fgr="f"
-        ).q-mr-sm.q-mb-sm
+        :style="{maxWidth: width > 700 ? '500px' : '100%', paddingRight: width > 700 ? '16px' : 0}"
+        ).row.full-width
+        FgrItem(
+          :fgr="f"
+          ).q-mb-md
 </template>
