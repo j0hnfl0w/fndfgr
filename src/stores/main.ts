@@ -4,6 +4,7 @@ import { stringShort } from 'src/utils'
 import { useWallet } from 'solana-wallets-vue'
 import { api, apiReg, directus } from 'boot/api'
 import { useStorage } from '@vueuse/core'
+import { ref, computed, watch } from 'vue'
 
 const logger = useLogger('storeMain')
 
