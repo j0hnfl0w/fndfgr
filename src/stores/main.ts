@@ -5,10 +5,13 @@ import { useWallet } from 'solana-wallets-vue'
 import { api, apiReg, directus } from 'boot/api'
 import { useStorage } from '@vueuse/core'
 import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const logger = useLogger('storeMain')
 
 export const useStoreMain = defineStore('main', () => {
+  const router = useRouter()
+
   // const network = ref(null)
   const user = ref(null)
   const address = ref(null)
@@ -62,7 +65,7 @@ export const useStoreMain = defineStore('main', () => {
   async function signOut() {
     try {
       logger.log(':signOut')
-      alert(':signOut alert')
+      // alert(':signOut alert')
       try {
         await directus.auth.logout()
       } catch (e) {
@@ -72,6 +75,7 @@ export const useStoreMain = defineStore('main', () => {
       // wallet.disconnect()
       user.value = null
       address.value = null
+      router.replace('/')
     } catch (e) {
       logger.log(':signOut error', e)
     }

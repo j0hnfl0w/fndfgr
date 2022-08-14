@@ -158,7 +158,7 @@ onMounted(() => {
 <template lang="pug">
 .row.no-wrap
   q-btn(
-    v-if="true"
+    v-if="storeMain.user"
     color="white"
     to="/me"
     :style="{width: '56px', height: '56px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm

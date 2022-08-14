@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router'
+import needAuth from './needAuth'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -18,7 +19,11 @@ const routes: RouteRecordRaw[] = [
       { path: 'voids/:id', component: () => import('pages/PageVoid.vue') },
       { path: 'fgrs', component: () => import('pages/PageFgrs.vue') },
       { path: 'fgrs/:id', component: () => import('pages/PageFgr.vue') },
-      { path: 'me', component: () => import('pages/PageMe.vue') },
+      {
+        path: 'me',
+        component: () => import('pages/PageMe.vue'),
+        beforeEnter: needAuth,
+      },
       { path: 'users/:address', component: () => import('pages/PageUser.vue') },
       { path: 'manifesto', component: () => import('pages/PageManifesto.vue') },
     ],

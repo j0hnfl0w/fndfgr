@@ -1,4 +1,9 @@
-// app global css in SCSS form
+html,
+body {
+  background: white !important;
+  color: black !important;
+}
+
 ::-webkit-scrollbar {
   display: none;
   width: 0;
