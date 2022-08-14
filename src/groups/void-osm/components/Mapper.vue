@@ -123,7 +123,7 @@ onMounted(() => {
   const view = map.value.getView()
   useGeographic()
   logger.log(':onMounted props.query', props.query)
-  if (props.query) {
+  if (props.query && props.query.coords) {
     view.setCenter(props.query.coords)
     view.setRotation(props.query.rotation)
     view.setZoom(props.query.zoom)

@@ -52,6 +52,10 @@ async function fgrCreate(payload: any) {
     const coverDataUrl = await htmlToImage.toBlob(refMapperWrapper.value)
     logger.log(':fgrCreate coverDataUrl', coverDataUrl)
     // create cover image from file here?
+    const urlCreator = window.URL || window.webkitURL
+    const imageUrl = urlCreator.createObjectURL(coverDataUrl)
+    document.querySelector('#image').src = imageUrl
+    return
     const coverFormdata = new FormData()
     coverFormdata.append('title', payload.name)
     coverFormdata.append('file', coverDataUrl)
@@ -109,6 +113,7 @@ q-page
       class="gt-sm"
       :style="{position: 'absolute', zIndex: 999, bottom: 0, left: 0}"
       ).row.full-width.justify-center.content-center.items-center.q-pa-md.q-px-md
+      img(id="image" :style="{width: '300px', height: '200px'}").br
       Controlls()
     div(
       ref="refMapperWrapper"

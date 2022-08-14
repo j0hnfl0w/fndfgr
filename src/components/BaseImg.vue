@@ -21,5 +21,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <img :src="src" draggable="false" alt="none" v-bind="props.rest" />
+  <img
+    :src="src"
+    draggable="false"
+    alt="none"
+    v-bind="props.rest"
+    class="bg-grey-4"
+  />
 </template>

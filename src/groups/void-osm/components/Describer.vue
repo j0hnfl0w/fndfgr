@@ -40,7 +40,7 @@
       div(v-if="state.url").row.full-width.q-pt-sm
         BaseButton(
           :loading="state.fgrCreating"
-          @click="fgrCreate()").full-width.br
+          @click="fgrCreate()").full-width
           span Create
 </template>
 
