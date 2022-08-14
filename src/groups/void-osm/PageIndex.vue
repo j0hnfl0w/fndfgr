@@ -50,43 +50,41 @@ async function fgrCreate(payload: any) {
   logger.log(':fgrCreate payload', payload, refMapper.value)
   logger.log(':fgrCreate mapMeta', state.mapMeta)
   try {
-    // const coverDataUrl = await htmlToImage.toBlob(refMapperWrapper.value)
     html2canvas(refMapperWrapper.value).then((canvas: any) => {
       logger.log(':fgrCreate canvas', canvas)
-      canvas.toBlob((coverDataUrl: any) => {
+      canvas.toBlob(async (coverDataUrl: any) => {
         logger.log(':fgrCreate coverDataUrl', coverDataUrl)
-        const urlCreator = window.URL || window.webkitURL
-        const imageUrl = urlCreator.createObjectURL(coverDataUrl)
-        document.querySelector('#image').src = imageUrl
+        // const urlCreator = window.URL || window.webkitURL
+        // const imageUrl = urlCreator.createObjectURL(coverDataUrl)
+        // document.querySelector('#image').src = imageUrl
+        const coverFormdata = new FormData()
+        coverFormdata.append('title', payload.name)
+        coverFormdata.append('file', coverDataUrl)
+        logger.log(':fgrCreate coverFormdata', coverFormdata)
+        const coverData = await directus.files.createOne(coverFormdata)
+        logger.log(':fgrCreate coverData', coverData)
+        // create fgr with this cover? no need to store tenor_url on our side
+        const _payload = {
+          status: 'published',
+          name: payload.name,
+          tenor_url: payload.url,
+          cover: coverData.id,
+          void: VOID_ORM_ID,
+          void_data: {
+            zoom: state.mapMeta.zoom,
+            coords: state.mapMeta.center,
+            rotation: state.mapMeta.rotation,
+          },
+          // TODO how to search on geo data inside json in pg?
+          // 'void-osm_zoom': state.mapMeta.zoom,
+          // 'void-osm_coords': state.mapMeta.center,
+          // 'void-osm_rotation': state.mapMeta.rotation,
+        }
+        logger.log(':fgrCreate _payload', _payload)
+        const fgrData = await directus.items('fgrs').createOne(_payload)
+        logger.log(':fgrCreate fgrData', fgrData)
+        // TODO whats next?
       })
-      //   const coverFormdata = new FormData()
-      //   coverFormdata.append('title', payload.name)
-      //   coverFormdata.append('file', coverDataUrl)
-      //   logger.log(':fgrCreate coverFormdata', coverFormdata)
-      //   const coverData = await directus.files.createOne(coverFormdata)
-      //   logger.log(':fgrCreate coverData', coverData)
-      //   // create fgr with this cover? no need to store tenor_url on our side
-      //   const _payload = {
-      //     status: 'published',
-      //     name: payload.name,
-      //     tenor_url: payload.url,
-      //     cover: coverData.id,
-      //     void: VOID_ORM_ID,
-      //     void_data: {
-      //       zoom: state.mapMeta.zoom,
-      //       coords: state.mapMeta.center,
-      //       rotation: state.mapMeta.rotation,
-      //     },
-      //     // TODO how to search on geo data inside json in pg?
-      //     // 'void-osm_zoom': state.mapMeta.zoom,
-      //     // 'void-osm_coords': state.mapMeta.center,
-      //     // 'void-osm_rotation': state.mapMeta.rotation,
-      //   }
-      //   logger.log(':fgrCreate _payload', _payload)
-      //   const fgrData = await directus.items('fgrs').createOne(_payload)
-      //   logger.log(':fgrCreate fgrData', fgrData)
-      //   // TODO whats next?
-      // })
     })
   } catch (e) {
     logger.log(':fgrCreate error', e)
