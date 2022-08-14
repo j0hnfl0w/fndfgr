@@ -125,8 +125,8 @@ onMounted(() => {
   logger.log(':onMounted props.query', props.query)
   if (props.query && props.query.coords) {
     view.setCenter(props.query.coords)
-    view.setRotation(props.query.rotation)
-    view.setZoom(props.query.zoom)
+    view.setRotation(+props.query.rotation)
+    view.setZoom(+props.query.zoom)
   }
   // interval for meta
   state.metaInterval = setInterval(() => {
