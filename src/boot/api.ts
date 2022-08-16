@@ -2,6 +2,7 @@ import { boot } from 'quasar/wrappers'
 import { createPinia } from 'pinia'
 import { useLogger } from 'src/composables/useLogger'
 import axios, { AxiosInstance } from 'axios'
+import { initWallet, useWallet } from 'solana-wallets-vue'
 
 import SolanaWallets from 'solana-wallets-vue'
 import 'solana-wallets-vue/styles.css'
@@ -17,10 +18,9 @@ const walletOptions = {
   wallets: [
     new PhantomWalletAdapter(),
     new SlopeWalletAdapter(),
-    new SolflareWalletAdapter({ network: WalletAdapterNetwork.Mainnet }),
+    // new SolflareWalletAdapter({ network: WalletAdapterNetwork.Mainnet }),
   ],
   autoConnect: true,
-  // localStorageKey: 'fndfgr-wallet',
 }
 
 import { Directus } from '@directus/sdk'
@@ -48,9 +48,36 @@ const apiAnon = axios.create({
 
 const apiRaw = axios.create()
 
+initWallet(walletOptions)
+
+import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
+import { Connection, clusterApiUrl } from '@solana/web3.js'
+
+// const connection = new Connection(clusterApiUrl('devnet'))
+// const connection = new Connection(clusterApiUrl('mainnet-beta'))
+
+// const metaplex = new Metaplex(connection)
+// initWallet({ autoConnect: true })
+// const wallet = useWallet() as any
+// const metaplex = Metaplex.make(connection).use(walletAdapterIdentity(wallet))
+// .use(keypairIdentity(wallet))
+// .use(bundlrStorage())
+
+function metaplexInit(type = 'devnet', wallet: any) {
+  logger.log(':metaplexInit', type)
+  if (type === 'devnet') {
+    const connection = new Connection(clusterApiUrl('devnet'))
+    const metaplex = Metaplex.make(connection).use(
+      walletAdapterIdentity(wallet.value)
+    )
+    return metaplex
+  }
+}
+
 export default boot(({ app }) => {
   app.use(createPinia())
   app.use(SolanaWallets, walletOptions)
+  app.provide('metaplexInit', metaplexInit)
 })
 
 export { directus, api, apiReg, apiAnon, apiRaw }

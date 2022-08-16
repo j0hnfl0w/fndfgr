@@ -9,6 +9,8 @@ import Mapper from './components/Mapper.vue'
 import Describer from './components/Describer.vue'
 import Controlls from './components/Controlls.vue'
 
+const VOID_COLLECTION_ADDRESS_DEVNET =
+  '3VDQ3riU7HRLt6doVhFqq6eaTEFXRiTj6BBB2U66spap'
 const VOID_ORM_ID = '9a2a900c-5e1c-4301-93e7-d0fe52dbe206'
 const props = defineProps({
   query: { type: Object },
@@ -101,9 +103,37 @@ function onMapperMeta(meta: any) {
   // logger.log(':onMapperMeta', meta)
   state.mapMeta = meta
 }
+// const metaplex = inject('metaplex')
 
-onMounted(() => {
-  logger.log(':onMounted')
+onMounted(async () => {
+  // logger.log(':onMounted', metaplex)
+  // const nfts = await metaplex
+  //   .nfts()
+  //   .findAllByOwner({ owner: 'CR82suhooTPYW2XRMaq1PS5hF8KDa5UmHye2T6qYAJ48' })
+  //   .run()
+  // logger.log('nfts', nfts)
+  try {
+    // const { uri } = await metaplex
+    //   .nfts()
+    //   .uploadMetadata({
+    //     name: 'My NFT',
+    //     description: 'My description',
+    //     image: 'https://arweave.net/123',
+    //   })
+    //   .run()
+    // logger.log('uri', uri)
+    // const { nft } = await metaplex
+    //   .nfts()
+    //   .create({
+    //     uri: 'https://www.fndfgr.com/fgrs/ba552fee-4280-4e0c-a80b-0bf6eb2cf197',
+    //     name: 'king',
+    //     sellerFeeBasisPoints: 500, // Represents 5.00%.
+    //   })
+    //   .run()
+    // logger.log('nft', nft)
+  } catch (e) {
+    logger.log('uri error', e)
+  }
 })
 </script>
 
@@ -119,6 +149,7 @@ q-page
         :style="{maxWidth: width > 1024 ? '240px' : '100%'}").full-width
     div(
       ref="refControlls"
+      class="lg"
       :style="{position: 'absolute', zIndex: 999, bottom: 0, left: 0}"
       ).row.full-width.justify-center.content-center.items-center.q-pa-md.q-px-md
       //- img(id="image" :style="{width: '200px', height: '200px'}").br

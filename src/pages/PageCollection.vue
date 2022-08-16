@@ -56,7 +56,9 @@ q-page
       span.q-mx-sm / 
       span.text-bold {{ state.collection?.name || 'loading...' }}
       .col
-    div(v-if="state.collection").row.full-width.q-gutter-y-md.q-mt-md
+    div(
+      v-if="state.collection"
+      :style="{paddingBottom: '200px'}").row.full-width.q-gutter-y-md.q-mt-xs
       router-link(
         v-for="(c,ci) in state.collection.voids" :key="c.id"
         :to="`/voids/${c.alias || c.id}`"

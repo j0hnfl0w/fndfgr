@@ -9,6 +9,9 @@ const { width } = useWindowSize()
 const storeMain = useStoreMain()
 const state = reactive({
   fgrs: [],
+  tab: 'nfts',
+  nftAddress: null,
+  loginLoading: false,
 }) as any
 
 watch(
@@ -36,6 +39,14 @@ async function getFgrs() {
   state.fgrs = data
 }
 
+async function login() {
+  logger.log(':login')
+  state.loginLoading = true
+  setTimeout(() => {
+    state.loginLoading = false
+  }, 1000)
+}
+
 onMounted(() => {
   logger.log(':onMounted')
 })
@@ -49,9 +60,30 @@ q-page
       ).row.items-center.content-center.justify-between.q-px-md.bg-grey-2
       span.text-bold {{ storeMain?.addressShort}}
       div
-        span.q-ml-md voids
-        span.q-ml-md edit
-    div(:style="{paddingBottom: '200px'}").row.full-width.q-gutter-y-md.q-pt-md
+        span(:class="{'text-bold': state.tab === 'nfts'}" @click="state.tab = 'nfts'").q-ml-md nfts
+        span(:class="{'text-bold': state.tab === 'voids'}" @click="state.tab = 'voids'").q-ml-md voids
+        //- span(:class="{'text-bold': state.tab === 'edit'}") edit
+    //- nfts
+    div(
+      v-if="state.tab === 'nfts'"
+      :style="{paddingBottom: '200px'}"
+      ).row.full-width.q-gutter-y-md.q-pt-md
+      div(
+        v-for="(n, ni) in storeMain.nfts" :key="n.addressText"
+        :style="{borderRadius: '8px'}").column.full-width.bg-grey-3.scroll
+        //- header
+        div(
+          @click="state.nftAddress === n.addressText ? state.nftAddress = null : state.nftAddress = n.addressText"
+          ).row.full-width.q-pa-md
+          span {{ n.name }}
+        //- body
+        div(v-if="state.nftAddress === n.addressText").row.full-width.q-px-md.q-pb-md
+          pre {{ n }}
+    //- voids
+    div(
+      v-if="state.tab === 'voids' && storeMain.user"
+      :style="{paddingBottom: '200px'}"
+      ).row.full-width.q-gutter-y-md.q-pt-md
       div(
         v-for="(f,fi) in state.fgrs" :key="f.id"
         :style="{maxWidth: width > 700 ? '500px' : '100%', paddingRight: width > 700 ? '16px' : 0}"
@@ -59,4 +91,15 @@ q-page
         FgrItem(
           :fgr="f"
           ).q-mb-md
+    //- voids banner
+    div(
+      v-if="state.tab === 'voids' && !storeMain.user"
+      :style="{borderRadius: '8px'}"
+      ).row.full-width.justify-center.q-pa-md.bg-grey-3.q-mt-md.text-center
+      span(:style="{margin: '40px 0', fontSize: '16px'}") To see your centralized fgrs, login with wallet
+      //- q-icon(name="question")
+      BaseButton(
+          :loading="state.loginLoading"
+          @click="login()").full-width
+          span Login with wallet
 </template>

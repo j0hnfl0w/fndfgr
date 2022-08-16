@@ -23,8 +23,8 @@ watch(
   (to, from) => {
     if (to) {
       logger.log(':W publicKey', to?.toBase58())
-      storeMain.address = to?.toBase58()
-      signIn()
+      // storeMain.address = to?.toBase58()
+      // signIn()
     }
   },
   {
@@ -157,12 +157,16 @@ onMounted(() => {
 
 <template lang="pug">
 .row.no-wrap
-  q-btn(
-    v-if="storeMain.user"
-    color="white"
-    to="/me"
-    :style="{width: '56px', height: '56px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm
-    UserAvatar(:id="publicKey?.toBase58()")
-    span(:style="{position: 'absolute', fontSize: '18px'}") ✨
+  transition(
+    appear
+    enter-active-class="animated slideInDown"
+    leave-active-class="animated slideOutUp")
+    q-btn(
+      v-if="publicKey"
+      color="white"
+      to="/me"
+      :style="{width: '56px', height: '56px', padding: 0, borderRadius: '8px', overflow: 'hidden'}").row.q-mr-sm
+      UserAvatar(:id="publicKey?.toBase58()")
+      q-icon(name="person" :style="{position: 'absolute', fontSize: '24px'}")
   WalletMultiButton()
 </template>

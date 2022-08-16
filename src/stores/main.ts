@@ -19,28 +19,68 @@ export const useStoreMain = defineStore('main', () => {
     return stringShort(address.value)
   })
 
+  const nfts = ref([])
   const collections = ref([])
   const voids = ref([])
   const fgrs = ref([])
 
-  const wallet = useWallet()
-  wallet.autoConnect = ref(true)
+  const wallet: any = useWallet()
+  const metaplexInit: any = inject('metaplexInit')
 
-  useStorage('walletName', 'Phantom')
+  async function nftCreate(m: any) {
+    try {
+      logger.log(':nftCreate')
+      const { nft } = await m
+        .nfts()
+        .create({
+          uri: 'https://www.fndfgr.com/voids/void-osm',
+          name: 'fndfgr-void-osm',
+          isCollection: true,
+          sellerFeeBasisPoints: 500, // Represents 5.00%.
+        })
+        .run()
+      logger.log(':nftCreate done')
+      return nft
+    } catch (e) {
+      logger.log(':nftCreate error', e)
+      return null
+    }
+  }
 
   watch(
-    wallet.ready,
-    (to) => {
-      logger.log(':W wallet.ready', to)
+    wallet.publicKey,
+    async (to) => {
       if (to) {
-        logger.log(':W wallet.ready', to)
-        const walletName = localStorage.getItem('walletName') as any | string
-        logger.log('walletName', walletName)
-        if (walletName) {
-          wallet.select(walletName)
-          wallet.connect()
-        }
+        address.value = to.toBase58()
+        logger.log(':W wallet.publicKey', address.value)
+        const m = metaplexInit('devnet', wallet.wallet)
+        // logger.log(':W wallet publicKey m', m)
+        const nftsRaw = await m
+          .nfts()
+          .findAllByOwner({
+            owner: address.value,
+          })
+          .run()
+        nfts.value = nftsRaw.map((nft: any) => {
+          logger.log(':nft', nft)
+          logger.log(':nft', nft.address.toBase58())
+          return {
+            ...nft,
+            addressText: nft.address.toBase58(),
+          }
+        })
+        // const nft = await nftCreate(m)
+        // logger.log('nft', nft)
       }
+      // if (to) {
+      //   logger.log(':W wallet.ready', to)
+      //   const walletName = localStorage.getItem('walletName') as any | string
+      //   logger.log('walletName', walletName)
+      //   if (walletName) {
+      //     wallet.select(walletName)
+      //     wallet.connect()
+      //   }
+      // }
     },
     {
       immediate: true,
@@ -52,7 +92,12 @@ export const useStoreMain = defineStore('main', () => {
     (to) => {
       if (to) {
         logger.log(':W wallet.disconnecting', to)
-        signOut()
+        address.value = null
+        nfts.value = []
+        collections.value = []
+        voids.value = []
+        fgrs.value = []
+        // signOut()
       }
     },
     { immediate: true }
@@ -95,6 +140,7 @@ export const useStoreMain = defineStore('main', () => {
     user,
     address,
     addressShort,
+    nfts,
     collections,
     voids,
     fgrs,
