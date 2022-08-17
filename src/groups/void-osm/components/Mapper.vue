@@ -136,6 +136,11 @@ onMounted(() => {
   logger.log(':onMounted')
   map.value = mapCreate()
   view.value = map.value.getView()
+  if (props.query?.coords) {
+    view.value.setCenter(props.query.coords)
+    view.value.setRotation(+props.query.rotation)
+    view.value.setZoom(+props.query.zoom)
+  }
   useGeographic()
   // interval for meta
   state.metaInterval = setInterval(() => {
