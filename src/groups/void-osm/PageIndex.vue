@@ -91,7 +91,7 @@ async function fgrCreate(payload: any) {
     }
 
     async function createNFT(fgr: any) {
-      // TODO
+      // TODO store metadata in arveawe...
       // const { uri } = await metaplex
       //   .nfts()
       //   .uploadMetadata({

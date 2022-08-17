@@ -24,14 +24,15 @@ function onFgrDataClick() {
 }
 
 onMounted(() => {
-  logger.log(':onMounted')
+  // logger.log(':onMounted')
 })
 </script>
 
 <template lang="pug">
 div(:style="{maxWidth: '500px', borderRadius: '8px', overflow: 'hidden'}").column.full-width.bg-grey-2
   template(v-if="state.voidAlias === 'void-osm'")
-    div(:style="{borderRadius: '6px', overflow: 'hidden'}").row.full-width
+    div(:style="{position: 'relative', borderRadius: '6px', overflow: 'hidden'}").row.full-width
+      slot(name="body")
       //- left
       div(:style="{}").col
         div(:style="{paddingBottom: '100%', position: 'relative'}").row.full-width
@@ -43,7 +44,8 @@ div(:style="{maxWidth: '500px', borderRadius: '8px', overflow: 'hidden'}").colum
           div(:style="{position: 'absolute'}").row.fit
             BaseImg(:src="props.fgr.tenor_url" :src-raw="true" :style="{objectFit: 'cover'}").fit
     //- footer
-    .column.full-width.justify-start.q-pa-md
+    div(:style="{position: 'relative'}").column.full-width.justify-start.q-pa-md
+      slot(name="footer")
       router-link(
         :to="`/fgrs/${props.fgr.id}`")
         span {{ props.fgr.name }}

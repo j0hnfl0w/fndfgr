@@ -35,7 +35,7 @@ watch(
 
 async function getFgrs(id: string) {
   logger.log(':getFgrs')
-  if (!storeMain.user) return
+  // if (!storeMain.user) return
   const { data } = await directus.items('fgrs').readByQuery({
     filter: { user_created: id },
     fields:

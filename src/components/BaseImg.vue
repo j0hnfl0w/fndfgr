@@ -14,6 +14,7 @@ const src = computed(() => {
     ? props.src
     : `https://qxjrh5n4.directus.app/assets/${props.src}`
 })
+// check img size
 // oncontextmenu="return false;"
 onMounted(() => {
   // logger.log(':onMounted')
@@ -26,6 +27,7 @@ onMounted(() => {
     draggable="false"
     alt="none"
     v-bind="props.rest"
+    oncontextmenu="return false;"
     class="bg-grey-4"
   />
 </template>

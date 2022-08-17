@@ -48,6 +48,8 @@ const storeMain = useStoreMain()
 
 const refMap: Ref<HTMLElement | undefined> = ref(undefined)
 const map: Ref<any> = ref(null)
+const view: Ref<any> = ref(null)
+
 const state = reactive({
   rotation: 0,
   rotateInterval: null,
@@ -117,23 +119,30 @@ function getCage() {
   // }, 2000)
 }
 
+watch(
+  () => props.query,
+  (to) => {
+    if (to && to.coords && view.value) {
+      logger.log(':W props.query', to)
+      view.value.setCenter(to.coords)
+      view.value.setRotation(+to.rotation)
+      view.value.setZoom(+to.zoom)
+    }
+  },
+  { immediate: true }
+)
+
 onMounted(() => {
-  logger.log(':onMounted', storeMain.userCoords)
+  logger.log(':onMounted')
   map.value = mapCreate()
-  const view = map.value.getView()
+  view.value = map.value.getView()
   useGeographic()
-  logger.log(':onMounted props.query', props.query)
-  if (props.query && props.query.coords) {
-    view.setCenter(props.query.coords)
-    view.setRotation(+props.query.rotation)
-    view.setZoom(+props.query.zoom)
-  }
   // interval for meta
   state.metaInterval = setInterval(() => {
     emit('meta', {
-      zoom: view.getZoom(),
-      rotation: view.getRotation(),
-      center: view.getCenter(),
+      zoom: view.value.getZoom(),
+      rotation: view.value.getRotation(),
+      center: view.value.getCenter(),
     })
   }, 1000)
 })
