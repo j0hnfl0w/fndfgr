@@ -5,7 +5,7 @@ import { useLogger } from 'src/composables/useLogger'
 import { stringShort } from 'src/utils'
 import { directus } from 'boot/api'
 import { copyToClipboard } from 'quasar'
-import { useQuasar } from 'quasar'
+import { useMeta, useQuasar } from 'quasar'
 
 const logger = useLogger('PageFgr')
 const $q = useQuasar()
@@ -15,6 +15,18 @@ const route = useRoute()
 const state = reactive({
   fgr: null,
 }) as any
+
+useMeta(() => {
+  return {
+    title: state.fgr?.name,
+    meta: {
+      ogImage: {
+        property: 'og:image',
+        content: `https://qxjrh5n4.directus.app/assets/${state.fgr?.cover?.id}`,
+      },
+    },
+  }
+})
 
 watch(
   () => route.params.id,
