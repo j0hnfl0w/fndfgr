@@ -62,14 +62,16 @@ import { Connection, clusterApiUrl } from '@solana/web3.js'
 // const metaplex = Metaplex.make(connection).use(walletAdapterIdentity(wallet))
 // .use(keypairIdentity(wallet))
 // .use(bundlrStorage())
-
+let metaplex: any = null
 function metaplexInit(type = 'devnet', wallet: any) {
+  if (metaplex) return metaplex
   logger.log(':metaplexInit', type)
   if (type === 'devnet') {
     const connection = new Connection(clusterApiUrl('devnet'))
-    const metaplex = Metaplex.make(connection).use(
+    const _metaplex = Metaplex.make(connection).use(
       walletAdapterIdentity(wallet.value)
     )
+    metaplex = _metaplex
     return metaplex
   }
 }

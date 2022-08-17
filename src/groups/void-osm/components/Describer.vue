@@ -85,18 +85,20 @@ function gifClick(g: any) {
 async function fgrCreate() {
   logger.log(':fgrCreate')
   state.fgrCreating = true
-  // do stuff
-  await props.create({ name: state.keywordsString, url: state.url })
-  // clear state
-  state.fgrCreating = false
-  state.tenorData = []
-  state.tenorLoading = false
-  state.url = null
-  state.keywordsString = ''
-  $q.notify({
-    type: 'success',
-    message: 'fgr created!',
-  })
+  props
+    .create({ name: state.keywordsString, url: state.url })
+    .then(() => {
+      // clear state
+      state.fgrCreating = false
+      state.tenorData = []
+      state.tenorLoading = false
+      state.url = null
+      state.keywordsString = ''
+    })
+    .catch((e: any) => {
+      logger.log(':fgrCreate error', e)
+      state.fgrCreating = false
+    })
 }
 
 const getImages = async (searchString: string) => {

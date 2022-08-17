@@ -79,7 +79,7 @@ q-page
         //- body
         div(v-if="state.nftAddress === n.addressText").row.full-width.q-px-md.q-pb-md
           pre {{ n }}
-    //- voids
+    //- fgrs
     div(
       v-if="state.tab === 'voids' && storeMain.user"
       :style="{paddingBottom: '200px'}"
@@ -91,15 +91,16 @@ q-page
         FgrItem(
           :fgr="f"
           ).q-mb-md
-    //- voids banner
-    div(
-      v-if="state.tab === 'voids' && !storeMain.user"
-      :style="{borderRadius: '8px'}"
-      ).row.full-width.justify-center.q-pa-md.bg-grey-3.q-mt-md.text-center
-      span(:style="{margin: '40px 0', fontSize: '16px'}") To see your centralized fgrs, login with wallet
-      //- q-icon(name="question")
-      BaseButton(
-          :loading="state.loginLoading"
-          @click="login()").full-width
-          span Login with wallet
+    //- fgrs banner
+    .row.full-width.justify-center.q-pt-md
+      div(
+        v-if="state.tab === 'voids' && !storeMain.user"
+        :style="{borderRadius: '8px', maxWidth: '400px'}"
+        ).row.full-width.justify-center.q-pa-md.bg-grey-3.text-center
+        span(:style="{margin: '40px 0', fontSize: '16px'}") To see your centralized fgrs, login with wallet
+        //- q-icon(name="question")
+        BaseButton(
+            :loading="state.loginLoading"
+            @click="login()").full-width
+            span Login with wallet
 </template>
