@@ -45,6 +45,7 @@ const state = reactive({
   mapMeta: null,
   creatorOpened: false,
   creatorData: null,
+  creatorStep: '',
 }) as any
 
 async function fgrCreate(payload: any) {
@@ -123,18 +124,21 @@ async function fgrCreate(payload: any) {
       coverUrl: urlCreator.createObjectURL(coverBlob),
     }
     logger.log(':fgrCreate url created.')
+    state.creatorStep = 'Creating FGR...'
     state.creatorOpened = true
 
     await storeMain.signIn()
     $q.notify({ type: 'success', message: 'Login done' })
 
     const fgr = await createFGR(coverBlob)
-    logger.log(':fgrCreate fgr', fgr)
+    logger.log(':fgrCreate FGR', fgr)
     $q.notify({ type: 'success', message: 'FGR Created' })
 
-    const nft = await createNFT(fgr)
-    logger.log(':fgrCreate nft', nft)
-    $q.notify({ type: 'success', message: 'NFT Minted' })
+    state.creatorStep = 'Minting NFT...'
+    createNFT(fgr).then(() => {
+      $q.notify({ type: 'success', message: 'NFT Minted' })
+      state.creatorStep = 'NFT Minted!'
+    })
   } catch (e) {
     logger.log(':fgrCreate error', e)
     $q.notify({ type: 'error', message: 'Something wrong' })
@@ -153,17 +157,15 @@ q-page
     //- Creator()
     div(
       v-if="state.creatorData"
-      :style="{width: '400px', minHeight: '400px'}").row.bg-white.q-pa-md
+      :style="{width: '400px', minHeight: '400px', borderRadius: '8px', overflow: 'hidden'}").row.bg-white.q-pa-md
       img(
         :src="state.creatorData.coverUrl"
         :style="{borderRadius: '8px'}"
         ).full-width
       //- tenor url
-      //- steps
-      //- steps
-      //- steps...
-      span.q-mt-md loading
-      q-btn(no-caps flat @click="state.creatorOpened = false") Close
+      .row.full-width.justify-between.q-pt-md
+        span {{ state.creatorStep }}
+        q-btn(no-caps flat @click="state.creatorOpened = false") Close
   div(
     ref="refWrapper"
     :style="{position: 'relative'}").row.full-width.window-height.justify-center.items-center.content-center

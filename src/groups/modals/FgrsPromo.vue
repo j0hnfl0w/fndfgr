@@ -36,7 +36,7 @@ onMounted(() => {
   transition(
     appear
     enter-active-class="animated slideInUp")
-    .row.full-width.scroll.q-px-md.q-pb-md.q-mt-sm
+    .row.full-width.scroll.q-px-md.q-pb-md.q-pt-sm
       div(v-if="state.fgrsShow").row.full-width.no-wrap
         div(
           v-for="(f,fi) in state.fgrs" :key="f.id"
@@ -44,7 +44,7 @@ onMounted(() => {
           ).row.full-width
           FgrItem(
             :fgr="f"
-            ).shadow-10
+            ).shadow-5
             template(#body)
               div(
                 :style="{position: 'absolute', zIndex: 100}"
