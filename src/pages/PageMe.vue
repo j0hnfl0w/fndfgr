@@ -3,23 +3,33 @@ import { useStoreMain } from 'src/stores/main'
 import { useLogger } from 'src/composables/useLogger'
 import { directus } from 'boot/api'
 import { useWindowSize } from '@vueuse/core'
+import { useWallet } from 'solana-wallets-vue'
 
 const logger = useLogger('PageMe')
+
 const { width } = useWindowSize()
+
+const wallet: any = useWallet()
+
 const storeMain = useStoreMain()
 const state = reactive({
-  fgrs: [],
   tab: 'nfts',
   nftAddress: null,
   loginLoading: false,
 }) as any
 
+watch(wallet.publicKey, async (to) => {
+  if (to) {
+    await storeMain.getNfts()
+  }
+})
+
 watch(
   () => storeMain.user,
-  (to) => {
+  async (to) => {
     if (to) {
       logger.log(':W storeMain.user', to)
-      getFgrs()
+      await getFgrs()
     }
   },
   {
@@ -28,7 +38,7 @@ watch(
 )
 
 async function getFgrs() {
-  logger.log(':getFgrs')
+  logger.log(':getFgrs start')
   if (!storeMain.user) return
   const { data } = await directus.items('fgrs').readByQuery({
     filter: { user_created: storeMain.user?.id },
@@ -36,15 +46,14 @@ async function getFgrs() {
       '*,cover.id,void.id,void.name,void.alias,user_created.id,user_created.address',
   })
   logger.log(':getFgrs', data)
-  state.fgrs = data
+  storeMain.fgrs = data
 }
 
 async function login() {
   logger.log(':login')
   state.loginLoading = true
-  setTimeout(() => {
-    state.loginLoading = false
-  }, 1000)
+  await storeMain.signIn()
+  state.loginLoading = false
 }
 
 onMounted(() => {
@@ -85,7 +94,7 @@ q-page
       :style="{paddingBottom: '200px'}"
       ).row.full-width.q-gutter-y-md.q-pt-md
       div(
-        v-for="(f,fi) in state.fgrs" :key="f.id"
+        v-for="(f,fi) in storeMain.fgrs" :key="f.id"
         :style="{maxWidth: width > 700 ? '500px' : '100%', paddingRight: width > 700 ? '16px' : 0}"
         ).row.full-width
         FgrItem(
@@ -100,7 +109,7 @@ q-page
         span(:style="{margin: '40px 0', fontSize: '16px'}") To see your centralized fgrs, login with wallet
         //- q-icon(name="question")
         BaseButton(
-            :loading="state.loginLoading"
-            @click="login()").full-width
-            span Login with wallet
+          :loading="state.loginLoading"
+          @click="login()").full-width
+          span Login with wallet
 </template>

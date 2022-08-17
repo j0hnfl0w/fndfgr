@@ -48,38 +48,35 @@ const apiAnon = axios.create({
 
 const apiRaw = axios.create()
 
+// Need to call it really here?
 initWallet(walletOptions)
 
 import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
 import { Connection, clusterApiUrl } from '@solana/web3.js'
 
-// const connection = new Connection(clusterApiUrl('devnet'))
-// const connection = new Connection(clusterApiUrl('mainnet-beta'))
-
-// const metaplex = new Metaplex(connection)
-// initWallet({ autoConnect: true })
-// const wallet = useWallet() as any
-// const metaplex = Metaplex.make(connection).use(walletAdapterIdentity(wallet))
-// .use(keypairIdentity(wallet))
-// .use(bundlrStorage())
-let metaplex: any = null
-function metaplexInit(type = 'devnet', wallet: any) {
-  if (metaplex) return metaplex
-  logger.log(':metaplexInit', type)
-  if (type === 'devnet') {
-    const connection = new Connection(clusterApiUrl('devnet'))
-    const _metaplex = Metaplex.make(connection).use(
+let metaplexLocal: any = null
+function useMetaplex(wallet?: any, type = WalletAdapterNetwork.Devnet) {
+  if (metaplexLocal) return metaplexLocal
+  if (!wallet.value) throw new Error('No wallet provided for metaplex!')
+  logger.log(':useMetaplex', wallet, type)
+  if (type === WalletAdapterNetwork.Devnet) {
+    const connection = new Connection(
+      clusterApiUrl(WalletAdapterNetwork.Devnet)
+    )
+    const metaplex = Metaplex.make(connection).use(
       walletAdapterIdentity(wallet.value)
     )
-    metaplex = _metaplex
+    // .use(keypairIdentity(wallet))
+    // .use(bundlrStorage())
+    metaplexLocal = metaplex
     return metaplex
   }
+  // const connection = new Connection(clusterApiUrl('mainnet-beta'))
 }
 
 export default boot(({ app }) => {
   app.use(createPinia())
   app.use(SolanaWallets, walletOptions)
-  app.provide('metaplexInit', metaplexInit)
 })
 
-export { directus, api, apiReg, apiAnon, apiRaw }
+export { directus, api, apiReg, apiAnon, apiRaw, useMetaplex }
