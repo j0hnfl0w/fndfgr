@@ -13,7 +13,7 @@ const wallet: any = useWallet()
 
 const storeMain = useStoreMain()
 const state = reactive({
-  tab: 'nfts',
+  tab: 'fgrs',
   nftAddress: null,
   loginLoading: false,
 }) as any
@@ -67,10 +67,10 @@ q-page
     div(
       :style="{height: '56px', marginTop: 'calc(16px + 56px)', borderRadius: '6px'}"
       ).row.items-center.content-center.justify-between.q-px-md.bg-grey-2
-      span.text-bold {{ storeMain?.addressShort}}
+      //- span.text-bold {{ storeMain?.addressShort}}
       div
-        span(:class="{'text-bold': state.tab === 'nfts'}" @click="state.tab = 'nfts'").q-ml-md nfts
-        span(:class="{'text-bold': state.tab === 'voids'}" @click="state.tab = 'voids'").q-ml-md voids
+        span(:class="{'text-bold': state.tab === 'fgrs'}" @click="state.tab = 'fgrs'").cursor-pointer My figures
+        span(:class="{'text-bold': state.tab === 'nfts'}" @click="state.tab = 'nfts'").cursor-pointer.q-ml-md My nfts
         //- span(:class="{'text-bold': state.tab === 'edit'}") edit
     //- nfts
     div(
@@ -90,7 +90,7 @@ q-page
           pre {{ n }}
     //- fgrs
     div(
-      v-if="state.tab === 'voids' && storeMain.user"
+      v-if="state.tab === 'fgrs' && storeMain.user"
       :style="{paddingBottom: '200px'}"
       ).row.full-width.q-gutter-y-md.q-pt-md
       div(

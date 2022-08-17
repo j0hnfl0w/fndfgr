@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { useLogger } from 'src/composables/useLogger'
 import { useWindowSize } from '@vueuse/core'
-import { directus, useMetaplex } from 'boot/api'
+import { directus } from 'boot/api'
 import { useQuasar } from 'quasar'
-import { useWallet } from 'solana-wallets-vue'
+// import { useWallet } from 'solana-wallets-vue'
 import { useStoreMain } from 'src/stores/main'
 import html2canvas from 'html2canvas'
 
@@ -12,8 +12,6 @@ import Describer from './components/Describer.vue'
 import Controlls from './components/Controlls.vue'
 import Creator from './components/Creator.vue'
 
-const VOID_COLLECTION_ADDRESS_DEVNET =
-  '3VDQ3riU7HRLt6doVhFqq6eaTEFXRiTj6BBB2U66spap'
 const VOID_ORM_ID = '9a2a900c-5e1c-4301-93e7-d0fe52dbe206'
 
 const props = defineProps({
@@ -91,57 +89,38 @@ async function fgrCreate(payload: any) {
       return fgrData
     }
 
-    async function createNFT(fgr: any) {
-      // TODO store metadata in arveawe...
-      // const { uri } = await metaplex
-      //   .nfts()
-      //   .uploadMetadata({
-      //     name: 'My NFT',
-      //     description: 'My description',
-      //     image: 'https://arweave.net/123',
-      //   })
-      //   .run()
-      // logger.log('uri', uri)
-      const metaplex = useMetaplex()
-      const { nft } = await metaplex
-        .nfts()
-        .create({
-          uri: `https://www.fndfgr.com/fgrs/${fgr.id}`,
-          name: fgr.name,
-          sellerFeeBasisPoints: 500, // Represents 5.00%.
-        })
-        .run()
-      logger.log('nft', nft)
-      return nft
+    state.creatorOpened = true
+    state.creatorData = {
+      step: 'Creating cover...',
+      void_data: state.mapMeta,
+      ...payload,
     }
 
     const coverBlob = await createCover()
     logger.log(':fgrCreate cover', coverBlob)
-    $q.notify({ type: 'success', message: 'Cover created' })
+    $q.notify({ type: 'positive', message: 'Cover created' })
     const urlCreator = window.URL || window.webkitURL
     logger.log(':fgrCreate url creating...')
-    state.creatorData = {
-      coverUrl: urlCreator.createObjectURL(coverBlob),
-    }
-    logger.log(':fgrCreate url created.')
-    state.creatorStep = 'Creating FGR...'
-    state.creatorOpened = true
+    state.creatorData.coverUrl = urlCreator.createObjectURL(coverBlob)
 
-    await storeMain.signIn()
-    $q.notify({ type: 'success', message: 'Login done' })
+    logger.log(':fgrCreate url created.')
+
+    state.creatorData.step = 'Creating figure...'
 
     const fgr = await createFGR(coverBlob)
+    state.creatorData.fgr = fgr
     logger.log(':fgrCreate FGR', fgr)
-    $q.notify({ type: 'success', message: 'FGR Created' })
+    $q.notify({ type: 'positive', message: 'Figure Created' })
 
-    state.creatorStep = 'Minting NFT...'
-    createNFT(fgr).then(() => {
-      $q.notify({ type: 'success', message: 'NFT Minted' })
-      state.creatorStep = 'NFT Minted!'
-    })
+    state.creatorData.step = 'Fixing bugs...'
+
+    setTimeout(() => {
+      state.creatorData.step = 'Mint Figure NFT'
+      $q.notify({})
+    }, 1000)
   } catch (e) {
     logger.log(':fgrCreate error', e)
-    $q.notify({ type: 'error', message: 'Something wrong' })
+    $q.notify({ type: 'negative', message: 'Something wrong, reload the page' })
   }
 }
 
@@ -154,26 +133,17 @@ onMounted(() => {
 q-page
   q-dialog(
     v-model="state.creatorOpened" :persistent="true")
-    //- Creator()
-    div(
-      v-if="state.creatorData"
-      :style="{width: '400px', minHeight: '400px', borderRadius: '8px', overflow: 'hidden'}").row.bg-white.q-pa-md
-      img(
-        :src="state.creatorData.coverUrl"
-        :style="{borderRadius: '8px'}"
-        ).full-width
-      //- tenor url
-      .row.full-width.justify-between.q-pt-md
-        span {{ state.creatorStep }}
-        q-btn(no-caps flat @click="state.creatorOpened = false") Close
+    Creator(
+      :data="state.creatorData"
+      @close="state.creatorOpened = false")
   div(
     ref="refWrapper"
     :style="{position: 'relative'}").row.full-width.window-height.justify-center.items-center.content-center
-    div(:style="{position: 'absolute', zIndex: 999, top: width > 1024 ? 0 : '70px', left: state.describerLeft+'px', width: width > 1024 ? 'auto' : '100%'}").row.q-pt-md.q-px-md
+    div(:style="{position: 'absolute', zIndex: 999, top: width > 1024 ? 0 : '70px', left: state.describerLeft+'px', width: width > 1024 ? '360px' : '100%'}").row.q-pt-md.q-px-md
       Describer(
         ref="refDescriber"
         :create="fgrCreate"
-        :style="{maxWidth: width > 1024 ? '240px' : '100%'}").full-width
+        :style="{maxWidth: width > 1024 ? '360px' : '100%'}").full-width
     div(
       ref="refControlls"
       class="gt-sm"

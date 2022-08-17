@@ -6,6 +6,7 @@ const logger = useLogger('FgrItem')
 
 const props = defineProps({
   fgr: { type: Object, required: true },
+  noContext: { type: Boolean, default: false },
 })
 
 const router = useRouter()
@@ -38,6 +39,14 @@ div(:style="{maxWidth: '500px', borderRadius: '8px', overflow: 'hidden'}").colum
         div(:style="{paddingBottom: '100%', position: 'relative'}").row.full-width
           div(:style="{position: 'absolute'}").row.fit
             BaseImg(:src="props.fgr.cover.id" @click="onFgrDataClick()").fit
+          q-btn(
+            v-if="!noContext"
+            flat no-caps
+            icon="ads_click"
+            :style="{position: 'absolute', bottom: '0px', left: '0px', zIndex: 99, borderRadius: '8px'}"
+            @click="onFgrDataClick()"
+            ).full-width
+            span.q-ml-sm Go there on map
       //- right
       div(:style="{}").col
         div(:style="{paddingBottom: '100%', position: 'relative'}").row.full-width

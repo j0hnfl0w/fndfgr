@@ -60,8 +60,8 @@ q-page
       ).row.items-center.content-center.justify-between.q-px-md.bg-grey-2
       span.text-bold {{ stringShort(state.user?.address) }}
       div
-        span.q-ml-md voids
-        span.q-ml-md follow
+        //- span.q-ml-md voids
+        span(@click="$q.notify({type: 'negative', message: 'Following users in progress'})").cursor-pointer.q-ml-md follow
         //- TODO is no you??
     div(:style="{paddingBottom: '200px'}").row.full-width.q-gutter-y-md.q-pt-md
       div(

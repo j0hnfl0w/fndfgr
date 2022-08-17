@@ -44,9 +44,16 @@ onMounted(() => {
           ).row.full-width
           FgrItem(
             :fgr="f"
+            :no-context="true"
             ).shadow-5
             template(#body)
               div(
                 :style="{position: 'absolute', zIndex: 100}"
                 @click="$emit('fgr', f)").row.fit.cursor-pointer
+                q-btn(
+                  flat no-caps
+                  icon="ads_click" color="white"
+                  :style="{borderRadius: '8px', opacity: 0.5, fontSize: '30px'}"
+                  @click="$emit('fgr', f)"
+                  ).fit
 </template>

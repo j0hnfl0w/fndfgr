@@ -5,7 +5,7 @@ import { useWallet } from 'solana-wallets-vue'
 import { api, apiReg, directus, useMetaplex } from 'boot/api'
 // import { useStorage } from '@vueuse/core'
 import { ref, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
 const logger = useLogger('storeMain')
 
@@ -13,14 +13,14 @@ const DOMAIN = 'fndfgr.com'
 const USER_ROLE_ID = '610a382d-989e-49a2-ba87-8e3267584a6a'
 
 export const useStoreMain = defineStore('main', () => {
-  const router = useRouter()
+  // const router = useRouter()
 
-  // const network = ref(null)
-  const user = ref(null) as any
+  const network = ref(null)
   const address = ref(null) as any
   const addressShort = computed(() => {
     return stringShort(address.value)
   })
+  const user = ref(null) as any
 
   const collections = ref([]) as any
   const voids = ref([]) as any
@@ -58,10 +58,7 @@ export const useStoreMain = defineStore('main', () => {
         const metaplex = useMetaplex(wallet.wallet)
         logger.log(':W wallet publicKey metaplex', metaplex)
         getNfts()
-        // sign in if we got token only...
-        if (localStorage.getItem('auth_token')) {
-          await signIn()
-        }
+        await signIn()
       }
     },
     {
@@ -75,11 +72,11 @@ export const useStoreMain = defineStore('main', () => {
       if (to) {
         logger.log(':W wallet.disconnecting', to)
         address.value = null
+        user.value = null
         nfts.value = []
         collections.value = []
         voids.value = []
         fgrs.value = []
-        alert('Stop')
         try {
           await directus.auth.logout()
         } catch (e) {
@@ -118,15 +115,15 @@ export const useStoreMain = defineStore('main', () => {
       // checks
       if (!address.value) throw new Error('No address!')
 
-      // const address = address.value
       const email = `${address.value}@${DOMAIN}`
-      let password = ''
+      let password: any = null
       // logger.log(':signIn', { address, email })
 
       async function login() {
         logger.log(':signIn login start')
         if (!localStorage.getItem('auth_token')) {
-          password = await _getPassword(address.value)
+          logger.log(':signIn TRY to LOGIN')
+          if (!password) password = await _getPassword(address.value)
           const loginData = await directus.auth.login({ email, password })
           logger.log(':signIn login data', loginData)
         }
@@ -137,21 +134,22 @@ export const useStoreMain = defineStore('main', () => {
       }
 
       return login()
-        .then((user) => {
-          logger.log(':signIn login done', user)
-          // $q.notify({ type: 'success', message: 'wlcm!' })
+        .then(() => {
+          logger.log(':signIn login FIRSTLY')
         })
         .catch(async (e) => {
           logger.log(':signIn login error', e)
           try {
             logger.log(':signIn reg start')
+            if (!password) password = await _getPassword(address.value)
             const { data } = await apiReg.post('/users', {
               email,
-              address,
+              address: address.value,
               password,
               role: USER_ROLE_ID,
             })
             logger.log(':signIn reg data', data)
+            logger.log(':signIn TRY to LOGIN AGAIN')
             await login()
           } catch (e) {
             logger.log(':signIn error', e)
@@ -159,11 +157,12 @@ export const useStoreMain = defineStore('main', () => {
         })
     } catch (e) {
       logger.log(':signIn error', e)
-      // $q.notify({ type: 'error', message: e.toString() })
+      // $q.notify({ type: 'negating', message: e.toString() })
     }
   }
 
   async function getNfts() {
+    // TODO add pagination
     const metaplex = useMetaplex()
     const nftsRaw = await metaplex
       .nfts()
@@ -172,8 +171,6 @@ export const useStoreMain = defineStore('main', () => {
       })
       .run()
     nfts.value = nftsRaw.map((nft: any) => {
-      // logger.log(':nft', nft)
-      // logger.log(':nft', nft.address.toBase58())
       return {
         ...nft,
         addressText: nft.address.toBase58(),
@@ -182,9 +179,10 @@ export const useStoreMain = defineStore('main', () => {
   }
 
   return {
-    user,
+    network,
     address,
     addressShort,
+    user,
     collections,
     voids,
     fgrs,
