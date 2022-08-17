@@ -4,8 +4,12 @@ import { useRoute } from 'vue-router'
 import { useLogger } from 'src/composables/useLogger'
 import { stringShort } from 'src/utils'
 import { directus } from 'boot/api'
+import { copyToClipboard } from 'quasar'
+import { useQuasar } from 'quasar'
 
 const logger = useLogger('PageFgr')
+const $q = useQuasar()
+
 const storeMain = useStoreMain()
 const route = useRoute()
 const state = reactive({
@@ -29,6 +33,20 @@ watch(
   { immediate: true }
 )
 
+function fgrCopyLink() {
+  logger.log(':fgrCopyLink')
+  if (!state.fgr) return
+  copyToClipboard(`https://fndfgr.com/fgrs/${state.fgr.id}`)
+    .then(() => {
+      logger.log(':fgrCopyLink done')
+      $q.notify({ type: 'positive', message: 'Link copied!' })
+    })
+    .catch((e) => {
+      logger.log(':fgrCopyLink error', e)
+      $q.notify({ type: 'positive', message: 'Link copy error!' })
+    })
+}
+
 onMounted(() => {
   logger.log(':onMounted')
 })
@@ -43,4 +61,10 @@ q-page
       v-if="state.fgr"
       :fgr="state.fgr"
       ).q-mr-sm.q-mb-sm
+    .row.full-width.justify-center
+      q-btn(
+        outline no-caps color="purple-8"
+        :style="{borderRadius: '8px', height: '44px', maxWidth: '500px'}"
+        :disabled="false"
+        @click="fgrCopyLink(), $emit('close')").q-mt-sm.full-width Copy link
 </template>
